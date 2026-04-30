@@ -42,11 +42,11 @@ class WebSocketsServer:
         await websocket.send(response)
         print(f"sended: {response}")
 
-    async def testing(self) -> None:
+    async def run(self) -> None:
         async with serve(self.work, "localhost", 5000) as server:
             await server.serve_forever()
 
 
 if __name__ == "__main__":
     server = WebSocketsServer()
-    asyncio.run(server.testing())
+    asyncio.run(server.run())
