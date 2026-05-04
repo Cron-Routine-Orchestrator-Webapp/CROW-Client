@@ -17,27 +17,24 @@ class WebSocketsServer:
         await websocket.send(greeting)
         print(f">>> {greeting}")
 
-    async def work(self, websocket):
+    async def work(self, websocket) -> None:
         package: Request = await websocket.recv()
         print(f"received: {package}")
 
         try:
-            output: str = self.executor.parsing(package)
-            response: Response = {
-                "STATUS": "success",
-                "CODE": 200,
-                "PID": package["PID"],
-                "ACTION_TYPE": package["ACTION_TYPE"],
-                "OUTPUT": output,
-            }
+            output = self.executor.parsing(package)
+            status, code = "success", 200
         except Exception as e:
-            response: Response = {
-                "STATUS": "error",
-                "CODE": 500,
-                "PID": package["PID"],
-                "ACTION_TYPE": package["ACTION_TYPE"],
-                "OUTPUT": str(e),
-            }
+            output = str(e)
+            status, code = "error", 500
+
+        response: Response = {
+            "STATUS": status,
+            "CODE": code,
+            "PID": package["PID"],
+            "ACTION_TYPE": package["ACTION_TYPE"],
+            "OUTPUT": output,
+        }
 
         await websocket.send(response)
         print(f"sended: {response}")

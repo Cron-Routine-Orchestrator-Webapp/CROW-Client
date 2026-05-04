@@ -9,13 +9,24 @@ class Executor:
     def parsing(self, package: Request) -> str:
         match package["ACTION_TYPE"]:
             case "cmd":
-                return self.execute_cmd(package["COMMAND"], *package["ARGS"])
+                command: str | None = package.get("COMMAND")
+                args: list[str] = package.get("ARGS", [])
+                if command is None:
+                    raise KeyError("COMMAND is required for action type 'cmd'")
+                return self.execute_cmd(command, *args)
             case "shell_cmd":
-                return self.execute_shell_cmd(package["COMMAND"])
+                command = package.get("COMMAND")
+                if command is None:
+                    raise KeyError("COMMAND is required for action type 'shell_cmd'")
+                return self.execute_shell_cmd(command)
             case "python_file":
-                return self.execute_python_file(
-                    package["ABSOLUT_PATH"], package["PYTHON_EXE"]
-                )
+                absolute_path: str | None = package.get("ABSOLUT_PATH")
+                python_exe: str = package.get("PYTHON_EXE", "python")
+                if absolute_path is None:
+                    raise KeyError(
+                        "ABSOLUT_PATH is required for action type 'python_file'"
+                    )
+                return self.execute_python_file(absolute_path, python_exe)
             case _:
                 raise ValueError(
                     f"{package['ACTION_TYPE']} is not a valid action type."
