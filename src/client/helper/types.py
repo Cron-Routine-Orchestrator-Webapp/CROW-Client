@@ -1,16 +1,16 @@
-from typing import TypedDict, NotRequired
+from pydantic import BaseModel
 
 
-class Request(TypedDict):
+class Request(BaseModel):
     PID: int
     ACTION_TYPE: str
-    COMMAND: NotRequired[str]
-    ARGS: NotRequired[list[str]]
-    ABSOLUT_PATH: NotRequired[str]
-    PYTHON_EXE: NotRequired[str]
+    COMMAND: str | None
+    ARGS: list[str] | None
+    ABSOLUT_PATH: str | None
+    PYTHON_EXE: str | None
 
 
-class Response(TypedDict):
+class Response(BaseModel):
     STATUS: str
     CODE: int
     PID: int
