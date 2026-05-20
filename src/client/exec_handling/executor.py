@@ -7,30 +7,28 @@ class Executor:
         pass
 
     def parsing(self, package: Request) -> str:
-        match package["ACTION_TYPE"]:
+        match package.ACTION_TYPE:
             case "cmd":
-                command: str | None = package.get("COMMAND")
-                args: list[str] = package.get("ARGS", [])
+                command: str | None = package.COMMAND
+                args: list[str] = package.ARGS or []
                 if command is None:
                     raise KeyError("COMMAND is required for action type 'cmd'")
                 return self.execute_cmd(command, *args)
             case "shell_cmd":
-                command = package.get("COMMAND")
+                command = package.COMMAND
                 if command is None:
                     raise KeyError("COMMAND is required for action type 'shell_cmd'")
                 return self.execute_shell_cmd(command)
             case "python_file":
-                absolute_path: str | None = package.get("ABSOLUT_PATH")
-                python_exe: str = package.get("PYTHON_EXE", "python")
+                absolute_path: str | None = package.ABSOLUT_PATH
+                python_exe: str = package.PYTHON_EXE or "python"
                 if absolute_path is None:
                     raise KeyError(
                         "ABSOLUT_PATH is required for action type 'python_file'"
                     )
                 return self.execute_python_file(absolute_path, python_exe)
             case _:
-                raise ValueError(
-                    f"{package['ACTION_TYPE']} is not a valid action type."
-                )
+                raise ValueError(f"{package.ACTION_TYPE} is not a valid action type.")
 
     def execute_cmd(self, command: str, *arguments: str) -> str:
         output: subprocess.CompletedProcess[str] = subprocess.run(

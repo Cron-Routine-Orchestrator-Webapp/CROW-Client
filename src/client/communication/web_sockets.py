@@ -1,7 +1,7 @@
 import asyncio
 from websockets.asyncio.server import serve
-from ..exec_handling.executor import Executor
-from ..helper.types import Request, Response
+from client.exec_handling.executor import Executor
+from client.helper.types import Request, Response
 
 
 class WebSocketsServer:
@@ -19,7 +19,7 @@ class WebSocketsServer:
 
     async def work(self, websocket) -> None:
         data: bytes = await websocket.recv()
-        package: Request = Request.model_validate_json(data)
+        package: Request = Request.model_validate_json(data.decode())
         print(f"received: {package}")
 
         try:
