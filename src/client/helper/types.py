@@ -15,4 +15,4 @@ class Response(BaseModel):
     CODE: int
     PID: int
     ACTION_TYPE: str
-    OUTPUT: str
+    OUTPUT: str | None

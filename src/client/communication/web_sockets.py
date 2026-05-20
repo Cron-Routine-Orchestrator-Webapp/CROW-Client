@@ -1,5 +1,7 @@
 import asyncio
 from websockets.asyncio.server import serve
+from websockets.exceptions import ConnectionClosed
+
 from client.exec_handling.executor import Executor
 from client.helper.types import Request, Response
 
@@ -18,27 +20,43 @@ class WebSocketsServer:
         print(f">>> {greeting}")
 
     async def work(self, websocket) -> None:
-        data: bytes = await websocket.recv()
-        package: Request = Request.model_validate_json(data.decode())
-        print(f"received: {package}")
-
         try:
-            output = self.executor.parsing(package)
-            status, code = "success", 200
-        except Exception as e:
-            output = str(e)
-            status, code = "error", 500
+            async for data in websocket:
+                try:
+                    # Parse request safely
+                    package = Request.model_validate_json(data)
+                    print(f"received: {package}")
 
-        response: Response = Response(
-            STATUS=status,
-            CODE=code,
-            PID=package.PID,
-            ACTION_TYPE=package.ACTION_TYPE,
-            OUTPUT=output,
-        )
+                    # Execute command
+                    try:
+                        output = self.executor.parsing(package)
+                        status, code = "success", 200
+                    except Exception as e:
+                        output = str(e)
+                        status, code = "error", 500
 
-        await websocket.send(response)
-        print(f"sended: {response}")
+                    # Build response
+                    response = Response(
+                        STATUS=status,
+                        CODE=code,
+                        PID=package.PID,
+                        ACTION_TYPE=package.ACTION_TYPE,
+                        OUTPUT=output,
+                    )
+
+                    # Send safely (connection might die anytime)
+                    try:
+                        await websocket.send(response.model_dump_json())
+                        print(f"sent: {response}")
+                    except ConnectionClosed:
+                        print("Client disconnected while sending response")
+                        return
+
+                except Exception as e:
+                    print(f"Invalid request: {e}")
+
+        except ConnectionClosed:
+            print("Connection closed")
 
     async def run(self) -> None:
         async with serve(self.work, "localhost", 5000) as server:
