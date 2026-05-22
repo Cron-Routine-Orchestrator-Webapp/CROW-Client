@@ -36,8 +36,6 @@ jobs:
         run: |
           uv run python -m nuitka \
             --standalone \
-            --onefile \
-            --nofollow-imports-to=mypy \
             --python-flag=-m \
             --output-filename=crow-client \
             src/client
@@ -49,8 +47,6 @@ jobs:
         run: |
           uv run python -m nuitka `
             --standalone `
-            --onefile `
-            --nofollow-imports-to=mypy `
             --python-flag=-m `
             --output-filename=crow-client `
             src/client
