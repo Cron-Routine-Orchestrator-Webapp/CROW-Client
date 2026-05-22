@@ -31,8 +31,6 @@ jobs:
       - name: Install dependencies (runtime only)
         run: uv sync --no-dev
 
-      # ❌ remove uv add nuitka (bad in CI)
-      # ✅ install explicitly in CI environment
       - name: Install build tools
         run: uv pip install "nuitka[onefile]"
 
@@ -47,7 +45,6 @@ jobs:
             --output-filename=crow-client \
             src/client
 
-      # Windows (IMPORTANT FIX)
       - name: Build Windows
         if: runner.os == 'Windows'
         shell: pwsh
