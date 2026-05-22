@@ -1,5 +1,5 @@
 import asyncio
-from communication.web_sockets import WebSocketsServer
+from client.communication.web_sockets import WebSocketsServer
 
 
 def main() -> None:

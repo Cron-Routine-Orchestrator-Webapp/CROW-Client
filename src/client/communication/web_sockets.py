@@ -10,15 +10,6 @@ class WebSocketsServer:
     def __init__(self) -> None:
         self.executor = Executor()
 
-    async def hello(self, websocket) -> None:
-        name: str = await websocket.recv()
-        print(f"<<< {name}")
-
-        greeting: str = f"Hello {name}!"
-
-        await websocket.send(greeting)
-        print(f">>> {greeting}")
-
     async def work(self, websocket) -> None:
         try:
             async for data in websocket:

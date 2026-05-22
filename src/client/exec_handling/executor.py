@@ -47,6 +47,8 @@ class Executor:
     def execute_python_file(
         self, absolute_path: str, python_exe: str = "python"
     ) -> str:
+        if python_exe is None:
+            python_exe = "python"
         output: subprocess.CompletedProcess[str] = subprocess.run(
             [python_exe, absolute_path], text=True
         )
