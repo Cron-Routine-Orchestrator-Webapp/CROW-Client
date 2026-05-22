@@ -24,19 +24,37 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras
 
-      - name: Build
+      - name: Install Nuitka extras
+        run: uv add "nuitka[onefile]"
+
+      # Linux/macOS
+      - name: Build Unix
+        if: runner.os != 'Windows'
         run: |
           uv run python -m nuitka \
             --standalone \
             --onefile \
+            --python-flag=-m \
             --output-filename=crow-client \
-            src/client/__main__.py
+            src/client
 
-      - name: Upload artifact
+      # Windows
+      - name: Build Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          uv run python -m nuitka `
+            --standalone `
+            --onefile `
+            --python-flag=-m `
+            --output-filename=crow-client `
+            src/client
+
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: myclient-${{ matrix.os }}
+          name: crow-client-${{ runner.os }}
           path: |
             *.exe
             *.bin
-            myclient
+            crow-client
