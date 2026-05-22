@@ -22,13 +22,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - uses: astral-sh/setup-uv@v6
 
-      - name: Install dependencies
+      - name: Install dependencies (runtime only)
         run: uv sync --no-dev
 
-      - name: Install Nuitka extras
-        run: uv add "nuitka[onefile]"
+      # ❌ remove uv add nuitka (bad in CI)
+      # ✅ install explicitly in CI environment
+      - name: Install build tools
+        run: uv pip install "nuitka[onefile]"
 
       # Linux/macOS
       - name: Build Unix
@@ -37,19 +43,21 @@ jobs:
           uv run python -m nuitka \
             --standalone \
             --onefile \
-            --python-flag=-m \
+            --assume-yes-for-downloads \
             --output-filename=crow-client \
             src/client
 
-      # Windows
+      # Windows (IMPORTANT FIX)
       - name: Build Windows
         if: runner.os == 'Windows'
         shell: pwsh
+        env:
+          NUITKA_ASSUME_YES_FOR_DOWNLOADS: "1"
         run: |
           uv run python -m nuitka `
             --standalone `
             --onefile `
-            --python-flag=-m `
+            --assume-yes-for-downloads `
             --output-filename=crow-client `
             src/client
 
@@ -60,4 +68,4 @@ jobs:
           path: |
             *.exe
             *.bin
-            crow-client
+            crow-client*
