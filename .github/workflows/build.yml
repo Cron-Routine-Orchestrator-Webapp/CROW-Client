@@ -1,0 +1,42 @@
+name: Build
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Build
+        run: |
+          uv run python -m nuitka \
+            --standalone \
+            --onefile \
+            --output-filename=crow-client \
+            src/client/__main__.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: myclient-${{ matrix.os }}
+          path: |
+            *.exe
+            *.bin
+            myclient
