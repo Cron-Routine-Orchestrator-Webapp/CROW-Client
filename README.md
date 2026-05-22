@@ -31,6 +31,70 @@ CROW-Client is a Python-based task execution agent that:
 - **Production-Ready**: Type-safe request/response validation using Pydantic
 - **Easy Integration**: Simple CLI startup and configuration
 
+## 🚀 Installation (Linux, macOS, Windows)
+
+CROW Client can be installed with a single command on all major operating systems. The installer scripts are fetched directly from this repository and executed locally.
+
+### ⚠️ Security Note
+
+This executes a remote script from this repository. Only run it if you trust the source.
+
+---
+
+## Linux / macOS (bash)
+
+### Linux
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Cron-Routine-Orchestrator-Webapp/CROW-Client/main/installer/install_linux.sh | bash
+```
+
+### macOS:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Cron-Routine-Orchestrator-Webapp/CROW-Client/main/installer/install_macos.sh | bash
+```
+
+---
+
+## Windows (PowerShell)
+
+Run in PowerShell:
+
+```powershell
+iwr https://raw.githubusercontent.com/Cron-Routine-Orchestrator-Webapp/CROW-Client/main/installer/install_windows.ps1 -UseBasicParsing | iex
+```
+
+---
+
+## What this does
+
+Each installer will:
+
+- Fetch the latest release from GitHub
+- Download the correct platform ZIP asset
+- Extract the `crow-client` executable
+- Install it into a user-local directory
+- Register it for auto-start:
+  - Linux: `systemd --user`
+  - macOS: `launchd`
+  - Windows: Startup folder shortcut
+- The client will start and listen on `0.0.0.0:1237` for incoming task requests from the CROW-Server.
+
+---
+
+## File locations after install
+
+- Linux: `~/.local/share/crow-client`
+- macOS: `~/Library/Application Support/crow-client`
+- Windows: `%APPDATA%\crow-client`
+
+---
+
+## Updating
+
+Re-run the same command to update to the latest version. The installer will replace the existing installation with the newest release automatically.
+
 ## 🏗️ Architecture
 
 ```
@@ -66,40 +130,6 @@ CROW-Client Architecture:
   - `asyncio` >= 4.0.0 - Asynchronous I/O support
   - `pydantic` >= 2.13.4 - Data validation and serialization
   - `websockets` >= 16.0 - WebSocket protocol implementation
-
-## 🚀 Quick Start
-
-### Installation
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/Cron-Routine-Orchestrator-Webapp/CROW-Client.git
-cd CROW-Client
-```
-
-2. Create a virtual environment (recommended):
-
-```bash
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install the package:
-
-```bash
-pip install -e .
-```
-
-### Running the Client
-
-Start the CROW-Client WebSocket server:
-
-```bash
-python -m client
-```
-
-The client will start and listen on `localhost:5000` for incoming task requests from the CROW-Server.
 
 ## 📂 Project Structure
 

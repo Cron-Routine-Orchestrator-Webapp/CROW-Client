@@ -50,7 +50,7 @@ class WebSocketsServer:
             print("Connection closed")
 
     async def run(self) -> None:
-        async with serve(self.work, "localhost", 5000) as server:
+        async with serve(self.work, "0.0.0.0", 1237) as server:
             await server.serve_forever()
 
 
