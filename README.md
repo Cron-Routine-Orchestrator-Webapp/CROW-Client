@@ -178,6 +178,7 @@ For detailed documentation and API reference, visit:
 ## 🔗 Related Projects
 
 - **[CROW-Server](https://github.com/Cron-Routine-Orchestrator-Webapp/CROW-Server)** - The orchestration server that dispatches tasks to clients
+- **[CROW Organization](https://github.com/Cron-Routine-Orchestrator-Webapp)** - Main organization repository
 
 ## 🤝 Contributing
 
